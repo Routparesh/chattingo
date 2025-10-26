@@ -101,10 +101,10 @@ jobs:
           args: >
             -Dsonar.projectName=chattingo-frontend
             -Dsonar.projectKey=chattingo-frontend
-            -Dsonar.sources=./frontend/src
-            -Dsonar.tests=./frontend/src
+            -Dsonar.sources=src
+            -Dsonar.tests=src
             -Dsonar.test.inclusions=**/*.test.js,**/*.spec.js
-            -Dsonar.javascript.lcov.reportPaths=./frontend/coverage/lcov.info
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
