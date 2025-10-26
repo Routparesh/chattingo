@@ -32,7 +32,7 @@ jobs:
             npm test -- --coverage
           else
             echo "⚠️ No test script found in frontend/package.json"
-
+          fi
   # ---------------- BACKEND TEST ----------------
   backend-test:
     runs-on: ubuntu-latest
