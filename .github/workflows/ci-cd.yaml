@@ -58,10 +58,21 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Load backend .env
+      - name: Load backend environment variables
         working-directory: ./backend
         run: |
-          export $(grep -v '^#' .env | xargs)
+          echo "SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/chattingo_db" >> $GITHUB_ENV
+          echo "SPRING_DATASOURCE_USERNAME=root" >> $GITHUB_ENV
+          echo "SPRING_DATASOURCE_PASSWORD=test@123" >> $GITHUB_ENV
+          echo "JWT_SECRET=htxAPEWvHnRrMlL403iAktlmOFlseDUiPIqsECSQpAM=" >> $GITHUB_ENV
+
+      - name: Wait for MySQL to be ready
+        run: |
+          for i in {1..15}; do
+          nc -zv 127.0.0.1 3306 && echo "MySQL is up!" && break
+          echo "Waiting for MySQL..."
+          sleep 5
+          done
       - name: Build backend
         working-directory: ./backend
         run: mvn clean package -DskipTests=false
