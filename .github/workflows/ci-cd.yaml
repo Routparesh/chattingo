@@ -96,7 +96,9 @@ jobs:
           args: >
             -Dsonar.projectName=chattingo-backend
             -Dsonar.projectKey=chattingo-backend
-
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@v3
         with:
