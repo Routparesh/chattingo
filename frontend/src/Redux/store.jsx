@@ -14,6 +14,4 @@ const rootReducer = combineReducers({
 // Create the Redux store with the rootReducer and apply middleware (thunk in this case)
 export const store = legacy_createStore(rootReducer, applyMiddleware(thunk));
 
-export { store };
-
 export default store;
