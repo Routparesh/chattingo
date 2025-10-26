@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chattingo-deployment
+  labels:
+    app: chattingo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chattingo
+  template:
+    metadata:
+      labels:
+        app: chattingo
+    spec:
+      containers:
+        - name: chattingo
+          image: routparesh/chattingo-frontend:latest
+          ports:
+            - containerPort: 80
