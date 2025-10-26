@@ -12,6 +12,22 @@ jobs:
   build-test-scan-deploy:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: test@123
+          MYSQL_DATABASE: chattingo_db
+          MYSQL_USERNAME: root
+          MYSQL_PASSWORD: test@123
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -42,6 +58,10 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      - name: Load backend .env
+        working-directory: ./backend
+        run: |
+          export $(grep -v '^#' .env | xargs)
       - name: Build backend
         working-directory: ./backend
         run: mvn clean package -DskipTests=false
