@@ -114,10 +114,11 @@ jobs:
         uses: sonarsource/sonarqube-scan-action@v3
         with:
           projectBaseDir: ./backend
-          args: >
-            -Dsonar.projectName=chattingo-backend
-            -Dsonar.projectKey=chattingo-backend
-            -Dsonar.java.binaries=target/classes
+          run: mvn sonar:sonar \
+            -Dsonar.projectKey=chattingo-backend \
+            -Dsonar.projectName=chattingo-backend \
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
@@ -164,18 +165,18 @@ jobs:
       - name: Build and Push Frontend image
         working-directory: ./frontend
         run: |
-          docker build -t ${{ env.FRONTEND_IMAGE }}:${{ github.sha }} .
-          docker push ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.FRONTEND_IMAGE }}:${{ github.sha }} .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
 
       - name: Build and Push Backend image
         working-directory: ./backend
         run: |
-          docker build -t ${{ env.BACKEND_IMAGE }}:${{ github.sha }} .
-          docker push ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_IMAGE }}:${{ github.sha }} .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_IMAGE }}:${{ github.sha }}
 
       - name: Update image tags in Kubernetes manifests
         run: |
-          sed -i "s|routparesh/chattingo-frontend:.*|routparesh/chattingo-frontend:${{ github.sha }}|g" k8s/deployment.yaml
+          sed -i "s|routparesh/chattingo-frontend:.*|${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_IMAGE }}:${{ github.sha }}|g" k8s/deployment.yaml
 
       - name: Commit updated image tags
         run: |
