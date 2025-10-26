@@ -82,11 +82,18 @@ jobs:
         run: mvn test
 
       # ---------------- SECURITY: GitLeaks ----------------
-      - name: Run GitLeaks scan
+
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks Scan
         uses: gitleaks/gitleaks-action@v2
         with:
-          config-path: .gitleaks.toml
-          args: detect --source . --no-banner --verbose
+          args: detect --source . --no-banner --verbose --config=.gitleaks.toml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # ---------------- QUALITY: SonarQube ----------------
       - name: SonarQube Scan
