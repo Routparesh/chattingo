@@ -64,7 +64,7 @@ jobs:
           echo "SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/chattingo_db" >> $GITHUB_ENV
           echo "SPRING_DATASOURCE_USERNAME=root" >> $GITHUB_ENV
           echo "SPRING_DATASOURCE_PASSWORD=test@123" >> $GITHUB_ENV
-          echo "JWT_SECRET=htxAPEWvHnRrMlL403iAktlmOFlseDUiPIqsECSQpAM=" >> $GITHUB_ENV
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> $GITHUB_ENV
 
       - name: Wait for MySQL to be ready
         run: |
