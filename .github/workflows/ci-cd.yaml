@@ -46,7 +46,7 @@ jobs:
         working-directory: ./frontend
         run: |
           if [ -f package.json ] && grep -q "\"test\":" package.json; then
-            npm test -- --watchAll=false
+            npm test -- --coverage
           else
             echo "⚠️ No test script found in frontend/package.json"
           fi
@@ -103,6 +103,7 @@ jobs:
           args: >
             -Dsonar.projectName=chattingo-backend
             -Dsonar.projectKey=chattingo-backend
+            -Dsonar.java.binaries=./backend/target/classes
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
@@ -113,6 +114,10 @@ jobs:
           args: >
             -Dsonar.projectName=chattingo-frontend
             -Dsonar.projectKey=chattingo-frontend
+            -Dsonar.sources=./frontend/src
+            -Dsonar.tests=./frontend/src
+            -Dsonar.test.inclusions=**/*.test.js,**/*.spec.js
+            -Dsonar.javascript.lcov.reportPaths=./frontend/coverage/lcov.info
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
