@@ -33,6 +33,7 @@ jobs:
           else
             echo "⚠️ No test script found in frontend/package.json"
           fi
+
   # ---------------- BACKEND TEST ----------------
   backend-test:
     runs-on: ubuntu-latest
@@ -42,8 +43,6 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: test@123
           MYSQL_DATABASE: chattingo_db
-          MYSQL_USERNAME: root
-          MYSQL_PASSWORD: test@123
         ports:
           - 3306:3306
         options: >-
@@ -111,19 +110,15 @@ jobs:
 
       # Backend Sonar scan
       - name: SonarQube Scan (backend)
-        uses: sonarsource/sonarqube-scan-action@v3
-        with:
-          projectBaseDir: ./backend
-          run: mvn sonar:sonar \
+        run: |
+          cd backend
+          mvn sonar:sonar \
             -Dsonar.projectKey=chattingo-backend \
             -Dsonar.projectName=chattingo-backend \
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-  # ---------------- SECURITY ----------------
+  # ---------------- SECURITY SCAN ----------------
   security-scan:
     runs-on: ubuntu-latest
     needs: sonar-scan
@@ -133,18 +128,75 @@ jobs:
         with:
           fetch-depth: 0
 
+      # --- Secret Scanning ---
       - name: Run Gitleaks Scan
         uses: gitleaks/gitleaks-action@v2
         with:
-          args: detect --source . --no-banner --verbose --config=.gitleaks.toml
+          args: detect --source . --no-banner --verbose
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Run Trivy filesystem scan
+      # --- Frontend Dependency Scan ---
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Frontend Dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Run npm audit for vulnerabilities
+        working-directory: ./frontend
+        run: npm audit --audit-level=low || true
+
+      # --- Backend Dependency Scan ---
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: OWASP Dependency Check (Backend)
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: chattingo-backend
+          path: ./backend
+          format: 'HTML'
+          out: reports
+
+      - name: Upload Dependency Check Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: reports
+
+      # --- Filesystem Vulnerability Scan ---
+      - name: Run Trivy Filesystem Scan
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'fs'
           scan-ref: .
+          format: 'table'
+          exit-code: '0'
+
+      # --- Image Vulnerability Scan (before push) ---
+      - name: Build Images for Scanning
+        run: |
+          docker build -t frontend-scan ./frontend
+          docker build -t backend-scan ./backend
+
+      - name: Run Trivy Image Scan (Frontend)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'frontend-scan'
+          format: 'table'
+          exit-code: '0'
+
+      - name: Run Trivy Image Scan (Backend)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'backend-scan'
           format: 'table'
           exit-code: '0'
 
@@ -176,7 +228,8 @@ jobs:
 
       - name: Update image tags in Kubernetes manifests
         run: |
-          sed -i "s|routparesh/chattingo-frontend:.*|${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_IMAGE }}:${{ github.sha }}|g" k8s/deployment.yaml
+          sed -i "s|routparesh/chattingo-frontend:.*|${{ secrets.DOCKERHUB_USERNAME }}/${{ env.FRONTEND_IMAGE }}:${{ github.sha }}|g" k8s/deployment.yaml
+          sed -i "s|routparesh/chattingo-backend:.*|${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_IMAGE }}:${{ github.sha }}|g" k8s/deployment.yaml
 
       - name: Commit updated image tags
         run: |
