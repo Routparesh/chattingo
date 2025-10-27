@@ -217,7 +217,7 @@ jobs:
       - name: Build and Push Frontend image
         working-directory: ./frontend
         run: |
-          docker build -t ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
+          docker build -t ${{ env.FRONTEND_IMAGE }}:${{ github.sha }} .
           docker push ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
 
       - name: Build and Push Backend image
