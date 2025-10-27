@@ -14,6 +14,17 @@ spec:
       labels:
         app: chattingo-backend
     spec:
+      initContainers:
+        - name: wait-for-db
+          image: busybox
+          command:
+            - sh
+            - -c
+            - |
+              until nc -z chattingo-db-service 3306; do
+                echo "Waiting for DB..."
+                sleep 2
+              done
       containers:
         - name: chattingo-backend
           image: routparesh/chattingo-backend:33bc576d4585f6673ac665ad81ba7c8d42ec3619
