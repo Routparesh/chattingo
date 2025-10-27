@@ -6,7 +6,7 @@ spec:
   selector:
     app: chattingo-db
   ports:
-    - name: http
-      protocol: TCP
+    - protocol: TCP
       port: 3306
       targetPort: 3306
+  type: ClusterIP

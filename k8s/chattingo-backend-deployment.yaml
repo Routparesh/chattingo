@@ -3,19 +3,30 @@ kind: Deployment
 metadata:
   name: chattingo-backend-deployment
   labels:
-    app: chattingo
+    app: chattingo-backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: chattingo
+      app: chattingo-backend
   template:
     metadata:
       labels:
         app: chattingo-backend
     spec:
       containers:
-        - name: chattingo
-          image:  routparesh/chattingo-backend:33bc576d4585f6673ac665ad81ba7c8d42ec3619
+        - name: chattingo-backend
+          image: routparesh/chattingo-backend:33bc576d4585f6673ac665ad81ba7c8d42ec3619
           ports:
             - containerPort: 8080
+          env:
+            - name: DB_HOST
+              value: chattingo-db-service
+            - name: DB_PORT
+              value: '3306'
+            - name: DB_NAME
+              value: chattingo_db
+            - name: DB_USER
+              value: root
+            - name: DB_PASSWORD
+              value: test@123

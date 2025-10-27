@@ -6,7 +6,7 @@ spec:
   selector:
     app: chattingo-frontend
   ports:
-    - name: http
-      protocol: TCP
+    - protocol: TCP
       port: 80
       targetPort: 3000
+  type: ClusterIP

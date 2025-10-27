@@ -3,12 +3,12 @@ kind: Deployment
 metadata:
   name: chattingo-frontend-deployment
   labels:
-    app: chattingo
+    app: chattingo-frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: chattingo
+      app: chattingo-frontend
   template:
     metadata:
       labels:
@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: chattingo-frontend
-          image:  routparesh/chattingo-frontend:33bc576d4585f6673ac665ad81ba7c8d42ec3619
+          image: routparesh/chattingo-frontend:33bc576d4585f6673ac665ad81ba7c8d42ec3619
           ports:
             - containerPort: 80
