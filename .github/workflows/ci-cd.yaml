@@ -166,7 +166,7 @@ jobs:
           path: ./backend
           format: 'HTML'
           out: reports
-          
+
       - name: Upload Dependency Check Report
         uses: actions/upload-artifact@v4
         with:
@@ -217,19 +217,19 @@ jobs:
       - name: Build and Push Frontend image
         working-directory: ./frontend
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.FRONTEND_IMAGE }}:${{ github.sha }} .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
+          docker build -t ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
+          docker push ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
 
       - name: Build and Push Backend image
         working-directory: ./backend
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_IMAGE }}:${{ github.sha }} .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_IMAGE }}:${{ github.sha }}
+          docker build -t ${{ env.BACKEND_IMAGE }}:${{ github.sha }} .
+          docker push ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
 
       - name: Update image tags in Kubernetes manifests
         run: |
-          sed -i "s|routparesh/chattingo-frontend:.*|${{ secrets.DOCKERHUB_USERNAME }}/${{ env.FRONTEND_IMAGE }}:${{ github.sha }}|g" k8s/deployment.yaml
-          sed -i "s|routparesh/chattingo-backend:.*|${{ secrets.DOCKERHUB_USERNAME }}/${{ env.BACKEND_IMAGE }}:${{ github.sha }}|g" k8s/deployment.yaml
+          sed -i "s|routparesh/chattingo-frontend:.*| ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}|g" k8s/deployment.yaml
+          sed -i "s|routparesh/chattingo-backend:.*| ${{ env.BACKEND_IMAGE }}:${{ github.sha }}|g" k8s/deployment.yaml
 
       - name: Commit updated image tags
         run: |
