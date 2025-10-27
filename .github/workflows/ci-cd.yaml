@@ -164,7 +164,7 @@ jobs:
           path: ./backend
           format: 'HTML'
           out: reports
-          java_home: /opt/java/openjdk
+          
       - name: Upload Dependency Check Report
         uses: actions/upload-artifact@v4
         with:
