@@ -161,7 +161,7 @@ You need to create these files from scratch:
 
 - Stage 1: Maven build environment
 - Stage 2: Build Spring Boot application
-- Stage 3: JRE runtimeee
+- Stage 3: JRE runtime
 
 #### **Docker Compose** (Root level)
 
