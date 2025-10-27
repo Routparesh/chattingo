@@ -158,7 +158,9 @@ jobs:
           java-version: 17
 
       - name: OWASP Dependency Check (Backend)
-        uses: jeremylong/DependencyCheck_Action@v12.1.0
+        uses: dependency-check/Dependency-Check_Action@main
+        env:
+          JAVA_HOME: /opt/jdk
         with:
           project: chattingo-backend
           path: ./backend
