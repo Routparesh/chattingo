@@ -228,8 +228,8 @@ jobs:
 
       - name: Update image tags in Kubernetes manifests
         run: |
-          sed -i "s|routparesh/chattingo-frontend:.*| ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}|g" k8s/deployment.yaml
-          sed -i "s|routparesh/chattingo-backend:.*| ${{ env.BACKEND_IMAGE }}:${{ github.sha }}|g" k8s/deployment.yaml
+          sed -i "s|routparesh/chattingo-frontend:.*| ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}|g" k8s/chattingo-frontend-deployment.yaml
+          sed -i "s|routparesh/chattingo-backend:.*| ${{ env.BACKEND_IMAGE }}:${{ github.sha }}|g" k8s/chattingo-backend-deployment.yaml
 
       - name: Commit updated image tags
         run: |
