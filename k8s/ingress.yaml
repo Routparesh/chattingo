@@ -23,6 +23,7 @@ metadata:
     # Optional: group rules under a single ALB if you plan multiple ingresses
     alb.ingress.kubernetes.io/group.name: chattingo-group
 spec:
+  ingressClassName: alb
   rules:
     - host: chattingo.paresh.work
       http:
