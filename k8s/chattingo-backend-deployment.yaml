@@ -24,7 +24,7 @@ spec:
               echo "Waiting for DB..."
               # Try 30 times (max ~60 seconds)
               for i in $(seq 1 30); do
-                nc -z chattingo-db-service 3306 && exit 0
+                nc -z db 3306 && exit 0
                 echo "DB not ready, retrying ($i/30)..."
                 sleep 2
               done
