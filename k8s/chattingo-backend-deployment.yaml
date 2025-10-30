@@ -21,13 +21,19 @@ spec:
             - sh
             - -c
             - |
-              until nc -z chattingo-db-service 3306; do
-                echo "Waiting for DB..."
+              echo "Waiting for DB..."
+              # Try 30 times (max ~60 seconds)
+              for i in $(seq 1 30); do
+                nc -z chattingo-db-service 3306 && exit 0
+                echo "DB not ready, retrying ($i/30)..."
                 sleep 2
               done
+              echo "DB did not start in time, exiting initContainer."
+              exit 1
+          imagePullPolicy: Always
       containers:
         - name: chattingo-backend
-          image:   routparesh/chattingo-backend:7cabfacc0550f243faab9d1a59bd9e8b9f5354be
+          image: routparesh/chattingo-backend:7cabfacc0550f243faab9d1a59bd9e8b9f5354be
           ports:
             - containerPort: 8080
           env:
@@ -41,3 +47,11 @@ spec:
               value: root
             - name: DB_PASSWORD
               value: test@123
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 5
+      restartPolicy: Always
