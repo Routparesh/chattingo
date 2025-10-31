@@ -16,8 +16,8 @@ metadata:
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
 
     # Optional health check settings
-    alb.ingress.kubernetes.io/healthcheck-path: /api/health
-    alb.ingress.kubernetes.io/healthcheck-port: '8080'
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/healthcheck-port: '80'
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
 
     # Optional: group rules under a single ALB if you plan multiple ingresses
@@ -36,12 +36,3 @@ spec:
                 name: chattingo-frontend-service
                 port:
                   number: 80
-
-          # Backend route
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: chattingo-backend-service
-                port:
-                  number: 8080
