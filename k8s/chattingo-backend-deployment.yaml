@@ -22,7 +22,6 @@ spec:
             - -c
             - |
               echo "Waiting for DB..."
-              # Try 30 times (max ~60 seconds)
               for i in $(seq 1 30); do
                 nc -z db 3306 && exit 0
                 echo "DB not ready, retrying ($i/30)..."
@@ -33,12 +32,12 @@ spec:
           imagePullPolicy: Always
       containers:
         - name: chattingo-backend
-          image:  routparesh/chattingo-backend:a6dd095e6a935ecc89f4630b69aa54428b34b63f
+          image: routparesh/chattingo-backend:a6dd095e6a935ecc89f4630b69aa54428b34b63f
           ports:
             - containerPort: 8080
           env:
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://db:3306/chattingo_db
+              value: jdbc:mysql://db:3306/chattingo_db?createDatabaseIfNotExist=true
             - name: SPRING_DATASOURCE_USERNAME
               value: root
             - name: SPRING_DATASOURCE_PASSWORD
@@ -47,7 +46,16 @@ spec:
             httpGet:
               path: /actuator/health
               port: 8080
-            initialDelaySeconds: 10
-            periodSeconds: 5
+            initialDelaySeconds: 25 # wait longer for Spring Boot startup
+            periodSeconds: 10
             failureThreshold: 5
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 35 # allow app to become stable first
+            periodSeconds: 20
+            failureThreshold: 5
+            timeoutSeconds: 5
       restartPolicy: Always
