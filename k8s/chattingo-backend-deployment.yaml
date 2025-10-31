@@ -32,7 +32,7 @@ spec:
           imagePullPolicy: Always
       containers:
         - name: chattingo-backend
-          image:  routparesh/chattingo-backend:b9f0da66970ce10deb3014b0d64f14582378ecae
+          image:   routparesh/chattingo-backend:60d9fa9727a5eed0c1d1da19b1d74cd1fe2c63ec
           ports:
             - containerPort: 8080
           env:
