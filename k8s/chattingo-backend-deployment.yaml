@@ -22,9 +22,9 @@ spec:
             - -c
             - |
               echo "Waiting for DB..."
-              for i in $(seq 1 30); do
+              for i in $(seq 1 60); do
                 nc -z db 3306 && exit 0
-                echo "DB not ready, retrying ($i/30)..."
+                echo "DB not ready, retrying ($i/60)..."
                 sleep 2
               done
               echo "DB did not start in time, exiting initContainer."
@@ -32,7 +32,7 @@ spec:
           imagePullPolicy: Always
       containers:
         - name: chattingo-backend
-          image:   routparesh/chattingo-backend:ec127a1f9ba4e3fcac6ba1c0f2d29752e642d005
+          image: routparesh/chattingo-backend:ec127a1f9ba4e3fcac6ba1c0f2d29752e642d005
           ports:
             - containerPort: 8080
           env:
@@ -46,15 +46,15 @@ spec:
             httpGet:
               path: /actuator/health/readiness
               port: 8080
-            initialDelaySeconds: 25 # wait longer for Spring Boot startup
+            initialDelaySeconds: 40 # wait longer for DB + app startup
             periodSeconds: 10
-            failureThreshold: 5
+            failureThreshold: 6
             timeoutSeconds: 5
           livenessProbe:
             httpGet:
-              path: /actuator/health
+              path: /actuator/health/liveness
               port: 8080
-            initialDelaySeconds: 35 # allow app to become stable first
+            initialDelaySeconds: 60 # app must stabilize first
             periodSeconds: 20
             failureThreshold: 5
             timeoutSeconds: 5
