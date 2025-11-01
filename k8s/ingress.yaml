@@ -19,7 +19,7 @@ spec:
       http:
         paths:
           # 💡 FIX 1: Explicitly match the sign-up path first
-          - path: /api/auth/signup
+          - path: /signup
             pathType: Exact
             backend:
               service:
@@ -28,7 +28,7 @@ spec:
                   number: 8080
 
           # 💡 FIX 2: Explicitly match the login path
-          - path: /api/auth/login
+          - path: /login
             pathType: Exact
             backend:
               service:
