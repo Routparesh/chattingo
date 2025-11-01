@@ -2,33 +2,22 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: chattingo-ingress
+  namespace: chattingo
   annotations:
-    # Required for AWS ALB Ingress Controller
     kubernetes.io/ingress.class: alb
-
-    # ALB scheme - internet-facing or internal
     alb.ingress.kubernetes.io/scheme: internet-facing
-
-    # Target type - IP mode for pods
     alb.ingress.kubernetes.io/target-type: ip
-
-    # Listen on HTTP (you can later switch to HTTPS)
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
-
-    # Optional health check settings
-    alb.ingress.kubernetes.io/healthcheck-path: /
-    alb.ingress.kubernetes.io/healthcheck-port: '80'
-    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
-
-    # Optional: group rules under a single ALB if you plan multiple ingresses
     alb.ingress.kubernetes.io/group.name: chattingo-group
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds=120
 spec:
   ingressClassName: alb
   rules:
     - host: chattingo.paresh.work
       http:
         paths:
-          # Frontend route
           - path: /
             pathType: Prefix
             backend:
@@ -36,3 +25,10 @@ spec:
                 name: chattingo-frontend-service
                 port:
                   number: 80
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: chattingo-backend-service
+                port:
+                  number: 8080
