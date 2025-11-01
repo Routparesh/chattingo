@@ -18,13 +18,25 @@ spec:
     - host: chattingo.paresh.work
       http:
         paths:
-          - path: /
-            pathType: Prefix
+          # 💡 FIX 1: Explicitly match the sign-up path first
+          - path: /api/auth/signup
+            pathType: Exact
             backend:
               service:
-                name: chattingo-frontend-service
+                name: chattingo-backend-service
                 port:
-                  number: 80
+                  number: 8080
+
+          # 💡 FIX 2: Explicitly match the login path
+          - path: /api/auth/login
+            pathType: Exact
+            backend:
+              service:
+                name: chattingo-backend-service
+                port:
+                  number: 8080
+
+          # EXISTING RULE: Generic /api rule (for all other protected API calls)
           - path: /api
             pathType: Prefix
             backend:
@@ -32,3 +44,12 @@ spec:
                 name: chattingo-backend-service
                 port:
                   number: 8080
+
+          # EXISTING RULE: Frontend traffic
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: chattingo-frontend-service
+                port:
+                  number: 80
