@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: chattingo-frontend
-          image:         routparesh/chattingo-frontend:523082d8370812dfc632bee2279be1ab05b0336c
+          image:          routparesh/chattingo-frontend:7bef9daf98ef735ee57477a8f7160bf1edf42da6
           ports:
             - containerPort: 80
