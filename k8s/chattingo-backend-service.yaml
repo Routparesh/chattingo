@@ -3,6 +3,7 @@ kind: Service
 metadata:
   name: chattingo-backend-service
 spec:
+  type: LoadBalancer
   selector:
     app: chattingo-backend
   ports:
