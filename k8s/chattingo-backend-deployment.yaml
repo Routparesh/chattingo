@@ -14,25 +14,9 @@ spec:
       labels:
         app: chattingo-backend
     spec:
-      initContainers:
-        - name: wait-for-db
-          image: busybox
-          command:
-            - sh
-            - -c
-            - |
-              echo "Waiting for DB..."
-              for i in $(seq 1 60); do
-                nc -z db 3306 && exit 0
-                echo "DB not ready, retrying ($i/60)..."
-                sleep 2
-              done
-              echo "DB did not start in time, exiting initContainer."
-              exit 1
-          imagePullPolicy: Always
       containers:
         - name: chattingo-backend
-          image:         routparesh/chattingo-backend:5d74fa78fc9cd4428190776e464a20515aabda2c
+          image: routparesh/chattingo-backend:5d74fa78fc9cd4428190776e464a20515aabda2c
           ports:
             - containerPort: 8080
           env:
@@ -42,4 +26,3 @@ spec:
               value: root
             - name: SPRING_DATASOURCE_PASSWORD
               value: test@123
-      
