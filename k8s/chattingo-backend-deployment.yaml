@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: chattingo-backend
-          image: routparesh/chattingo-backend:682b35874d299af33daf790d46d397c25e676a55
+          image:  routparesh/chattingo-backend:7b34fca3ee4a822bbc868270b33201e84abcb6ca
           ports:
             - containerPort: 8080
           env:
